@@ -30,7 +30,7 @@ nav{
   }
   
 
-  #searchBar{
+#searchBar{
     width: 400px;
     padding: 10px;
     border: none;
@@ -44,10 +44,11 @@ nav{
     color: #fff;
     cursor: pointer;
     padding: 10px 20px;
+    font-size: 12px;
     border-radius: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: absolute;
-    right: 180px;
+    right: 170px;
     transition: .9s ease;
 }
   
