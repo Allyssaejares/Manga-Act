@@ -1,50 +1,40 @@
-const formE1 = document.querySelector(".search-result")//form
-const inputE1 = document.querySelector(".searchBar")//search-input
-const mangalist = document.querySelector(".manga-list")//searc result
+const display = document.querySelector('#container');
 
-let searchData = ""
-let page = 1;
-let btn = document.getElementById('searchbtn')
+const displayManga = async() => {
+    const response = await fetch(`https://api.mangadex.org/manga?limit=10&includes%5B%5D=cover_art`)
+    const data = await response.json();
 
-async function searchManga (){
-    searchData = inputE1.value;
-    const mangaUrl = `https://api.mangadex.org/manga?page=${page}title=${encodeU(inputE1)}`
+    let datadisplay = data.data.map((manga) => {
+        const title = manga.attributes.title.en;
+        const description = manga.attributes.description.en;
+        const mangaId = manga.id;
+        let filename;
 
-    const response = await fetch(mangaUrl)
-    const data = await response.json()
+        for (let i = 0; i < manga.relationships.length; i++) {
+            if (manga.relationships[i].type === "cover_art") {
+                filename = manga.relationships[i].attributes.fileName;
+                break;
+            }
+        }
 
-    const result = data.result
+        if (!filename) {
+            console.log(`No cover found for manga ${mangaId}`);
+            return "";
+        }
 
-    if(page === 1){
-        mangalist.innerHTML = ""
-    }
-
-    result.map((result)=>{
-        const mangaWrapper = document.createElement('div')
-        mangaWrapper.classList.add("manga-card")
-
-        const image = document.createElement('img')
-        image.src = result.urls.small
-        image.alt = result.alt.description
-
-        const title = document.createElement('h2')
-        title = result.attributes.title
-
-        const description = document.createElement('description')
-        description = result.attributes.description
-
-        mangaWrapper.appendChild(image);
-        mangaWrapper.appendChild(title);
-        mangaWrapper.appendChild(description);
-        mangalist.appendChild(mangaWrapper);
-    });
-
-    page++;
+        return `
+            <div class="manga-container">
+                <div class="manga-card">
+                    <img src="https://uploads.mangadex.org/covers/${mangaId}/${filename}"> 
+                    <h3>${title}</h3>
+                </div>
+                <div class="wrapper">
+                    <p>${description}</p>
+                </div>
+            </div>
+           `
+    }).join("");
+    display.innerHTML = datadisplay;
 }
 
-formE1.addEventListener("searchbtn", (event)=>{
-    event.preventDefault();
-    page = 1;
-    searchManga();
-})
-
+displayManga();
