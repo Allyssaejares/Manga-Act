@@ -1,7 +1,17 @@
-const display = document.querySelector('#container');
+const search = document.querySelector('.search');
+const input = document.getElementById('searchBar');
+const btn = document.getElementById('search-btn');
+const display = document.getElementById('container');
 
-const displayManga = async() => {
-    const response = await fetch(`https://api.mangadex.org/manga?limit=10&includes%5B%5D=cover_art`)
+let keyword = ""
+let page = 1;
+
+
+async function displayResults() {
+    keyword = input.value;
+    const mangaUrl = `https://api.mangadex.org/manga?limit=50&title=${keyword}&includes%5B%5D=cover_art`
+
+    const response = await fetch(mangaUrl);
     const data = await response.json();
 
     let datadisplay = data.data.map((manga) => {
@@ -34,7 +44,17 @@ const displayManga = async() => {
             </div>
            `
     }).join("");
-    display.innerHTML = datadisplay;
+
+    display.innerHTML = datadisplay;   
 }
 
-displayManga();
+search.addEventListener("submit", (e) =>{
+    e.preventDefault();
+    page = 1;
+    
+    displayResults();
+})
+
+btn.addEventListener('click', displayResults());
+
+
